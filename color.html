@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Таблиця</title>
+    <style>
+
+        td {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            cursor: pointer;
+            border: 1px solid black;
+        }
+
+
+        button#toggleClickChange {
+            background-color: forestgreen;
+            color: #fff;
+            padding: 10px 20px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button#toggleClickChange:hover {
+            background-color: darkgreen; 
+        }
+    </style>
+</head>
+<body>
+    <!-- Вибір кольору за допомогою input type="color" -->
+    <label for="colorPicker">Виберіть колір:</label>
+    <input type="color" id="colorPicker">
+
+    <!-- Таблиця для відображення даних -->
+    <table id="table">
+    </table>
+
+    <!-- Додана кнопка для активації/деактивації функції зміни кольорів при кліці -->
+    <button id="toggleClickChange">Увімкнути/вимкнути One Click</button>
+
+    <!-- JavaScript-скрипт для динамічної зміни кольорів -->
+    <script>
+        // Отримуємо посилання на таблицю, input для вибору кольору та кнопку за допомогою їхніх ID
+        const table = document.getElementById('table');
+        const colorPicker = document.getElementById('colorPicker');
+        const toggleClickButton = document.getElementById('toggleClickChange');
+
+        // Змінна для відстеження стану активації/деактивації функції зміни кольору при кліці
+        let isClickChangeEnabled = true;
+
+        // Зміна стану активації/деактивації функції зміни кольору при кліці при натисканні кнопки
+        toggleClickButton.addEventListener('click', function () {
+            isClickChangeEnabled = !isClickChangeEnabled;
+            toggleClickButton.textContent = isClickChangeEnabled ? 'Вимкнути One Click' : 'Увімкнути One Click';
+        });
+
+        // Заповнення таблиці номерами від 1 до 36
+        let cellNumber = 1;
+        for (let i = 0; i < 6; i++) {
+            const row = document.createElement('tr');
+            for (let j = 0; j < 6; j++) {
+                const cell = document.createElement('td');
+                cell.textContent = cellNumber;
+                cellNumber++;
+                row.appendChild(cell);
+            }
+            table.appendChild(row);
+        }
+
+        // Зміна колірів при наведенні тільки комірки з номером 5
+        table.addEventListener('mouseover', function (event) {
+            if (event.target.tagName === 'TD' && isClickChangeEnabled) {
+                if (event.target.textContent === '5') {
+                    event.target.style.backgroundColor = getRandomColor();
+                }
+            }
+        });
+
+        // Зміна кольору при кліку на будь-якій комірці таблиці, якщо функція активована
+        table.addEventListener('click', function (event) {
+            if (event.target.tagName === 'TD' && isClickChangeEnabled) {
+                event.target.style.backgroundColor = colorPicker.value;
+            }
+        });
+
+        // Функція для генерації випадкового кольору
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        // Зміна кольору всіх клітинок таблиці крім обраної при подвійному кліці
+        table.addEventListener('dblclick', function (event) {
+            if (event.target.tagName === 'TD') {
+                const clickedCell = event.target;
+                const cells = document.querySelectorAll('td');
+
+                // Отримуємо колір, який обрано в colorPicker
+                const selectedColor = colorPicker.value;
+
+                // Проходимося по всім клітинкам і встановлюємо їм колір, окрім клітинки, на яку був зроблений клік
+                cells.forEach(function (cell) {
+                    if (cell !== clickedCell) {
+                        cell.style.backgroundColor = selectedColor;
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
