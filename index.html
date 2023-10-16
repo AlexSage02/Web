@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Information about users</title>
+    <style>
+        #users-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: row;
+            flex-wrap: wrap;
+            margin-top: 50px;
+        }
+
+        .user {
+            flex-basis: 20%;
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .user img {
+            border-radius: 50%;
+        }
+
+        #refresh-button {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+            #refresh-button button {
+                padding: 10px 20px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 16px;
+            }
+
+            #refresh-button button:hover {
+                background-color: #45a049;
+            }
+    </style>
+</head>
+<body>
+    <div id="refresh-button">
+        <button onclick="refreshPage()">Оновити інформацію про користувачів</button>
+    </div>
+
+    <div id="users-container"></div>
+
+    <script>
+        function refreshPage() {
+            window.location.reload();
+        }
+
+        fetch('https://randomuser.me/api/?results=8')
+            .then(response => response.json())
+            .then(data => {
+                const users = data.results;
+                const usersContainer = document.getElementById('users-container');
+
+                users.forEach(user => {
+                    const userDiv = document.createElement('div');
+                    userDiv.classList.add('user');
+
+                    const picture = user.picture.large;
+                    const cell = user.cell;
+                    const country = user.location.country;
+                    const email = user.email;
+                    const coordinates = `Latitude: ${user.location.coordinates.latitude}, Longitude: ${user.location.coordinates.longitude}`;
+
+                    const img = document.createElement('img');
+                    img.src = picture;
+                    userDiv.appendChild(img);
+
+                    const p1 = document.createElement('p');
+                    p1.textContent = `Cell: ${cell}`;
+                    userDiv.appendChild(p1);
+
+                    const p2 = document.createElement('p');
+                    p2.textContent = `Country: ${country}`;
+                    userDiv.appendChild(p2);
+
+                    const p3 = document.createElement('p');
+                    p3.textContent = `Email: ${email}`;
+                    userDiv.appendChild(p3);
+
+                    const p4 = document.createElement('p');
+                    p4.textContent = `Coordinates: ${coordinates}`;
+                    userDiv.appendChild(p4);
+
+                    usersContainer.appendChild(userDiv);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    </script>
+</body>
+</html>
